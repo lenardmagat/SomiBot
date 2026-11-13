@@ -1,0 +1,46 @@
+services:
+  somibot-db:
+    image: postgres:16-alpine
+    container_name: somibot_postgres_db
+    environment:
+      POSTGRES_USER: lenard_admin
+      POSTGRES_PASSWORD: super_secure_password123
+      POSTGRES_DB: somiBot_system_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lenard_admin -d somiBot_system_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - somibot-network
+  
+  somibot-api:
+    image: somibot-api-service
+    container_name: somibot_backend_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # Note: Host is now lowercase (somibot-db) to match the service name
+      - ConnectionStrings__DefaultConnection=Host=somibot-db;Port=5432;Database=somiBot_system_db;Username=lenard_admin;Password=super_secure_password123
+      - R2__AccountId=${AccountId}
+      - R2__AccessKey=${AccessKey}
+      - R2__SecretKey=${SecretKey}
+      - R2__BucketName=${BucketName}
+    depends_on:
+      - somibot-db
+    networks:
+      - somibot-network
+
+volumes:
+  postgres_data:
+
+networks:
+  somibot-network:
