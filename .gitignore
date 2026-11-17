@@ -1,4 +1,4 @@
 .env
-/obj
-/bin
-/.vscode
+obj/
+.vscode/
+bin/

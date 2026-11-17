@@ -28,7 +28,6 @@ services:
       - "5000:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      # Note: Host is now lowercase (somibot-db) to match the service name
       - ConnectionStrings__DefaultConnection=Host=somibot-db;Port=5432;Database=somiBot_system_db;Username=lenard_admin;Password=super_secure_password123
       - R2__AccountId=${AccountId}
       - R2__AccessKey=${AccessKey}
